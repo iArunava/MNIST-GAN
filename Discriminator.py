@@ -2,16 +2,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class Generator(nn.Module):
-    
+class Discriminator(nn.Module):
     def __init__(self, input_size, hidden_dim, output_size):
         '''
-        This is the constructor class for the generator
+        The constructor class for the Discriminator
 
         Arguments:
-        - input_size : The hidden size of the vector of the latent sample
-        - hidden_dim : The number of neurons for the last number of layers
-        - output_size : The number neurons for the output layer
+        - input_size : the number of input neurons
+        - hidden_dim : the number of hidden neurons in the last layer
+        - output_size : the number of output neurons
         '''
         
         # Define the class variables
@@ -19,28 +18,29 @@ class Generator(nn.Module):
         self.hidden_dim = hidden_dim
         self.output_size = output_size
 
-        # Define the modules required by this class
-        self.fc1 = nn.Linear(self.input_size, self.hidden_dim)
-        self.fc2 = nn.Linear(self.hidden_dim, self.hidden_dim*2)
-        self.fc3 = nn.Linear(self.hidden_dim*2, self.hidden_dim*4)
+        # Define the required modules for this architecture
+        self.fc1 = nn.Linear(self.input_size, self.hidden_dim*2)
+        self.fc2 = nn.Linear(self.hidden_dim*2, self.hidden_dim*3)
+        self.fc3 = nn.Linear(self.hidden_dim*3, self.hidden_dim)
 
-        self.fc4 = nn.Linear(hidden_dim*4, output_size)
+        self.fc4 = nn.Linear(self.hidden_dim, self.output_size)
 
         self.dropout = nn.Dropout(0.3)
 
-        self.tanh = nn.tanh()
-
     def forward(self, x):
         '''
-        This method defines the forward pass for Generator module
-        
+        This method defines the forward pass for the Discriminator module
+
         Arguments:
         - x : the input to the network
 
         Returns:
         - out : the output of the network
         '''
+        # Flatten the images
+        x = x.view(-1, 784)
 
+        # Forward pass
         x = F.leaky_relu(self.fc1(x), 0.2)
         x = self.dropout(x)
 
@@ -50,7 +50,6 @@ class Generator(nn.Module):
         x = F.leaky_relu(self.fc3(x), 0.2)
         x = self.dropout(x)
 
-        x = self.fc4(x)
-        out = self.tanh(x)
+        out = self.fc4(x)
 
         return out

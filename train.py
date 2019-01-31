@@ -4,7 +4,7 @@ from torchvision import datasets
 import torchvision.transforms as transforms
 from .Discriminator import Discriminator
 from .Generator import Generator
-from utils import *
+from viz import *
 
 def train(FLAGS):
     
@@ -23,6 +23,7 @@ def train(FLAGS):
     epochs = FLAGS.epochs
     p_every = FLAGS.p_every
     e_size = FLAGS.eval_size
+    save_samples = FLAGS.save_samples
 
     # Define the transforms
     transform = transforms.ToTensor()
@@ -145,3 +146,7 @@ def train(FLAGS):
                     samples_z = G(fixed_z)
                     samples.append(samples_z)
                     G.train()
+
+                if save_samples:
+                    with open('train_samples.pkl', 'wb') as f:
+                        pkl.dump(samples, f)

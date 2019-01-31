@@ -87,6 +87,18 @@ if __name__ == '__main__':
             default=True,
             help='Whether to plot losses or not')
 
+    parser.add_argument('--mode',
+            type=str,
+            default='test',
+            help='The mode whether to train or test')
+
+    parser.add_argument('-dpath',
+            type=str,
+            default='./pretrained_models/KMNIST/model-d-kmnist.pt')
+
+    parser.add_argument('-gpath',
+            type=str,
+            default='./pretrained_models/KMNIST/model-g-kmnist.pt')
 
     FLAGS, unparsed = parser.parse_known_args()
 

@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 from Discriminator import Discriminator
 from Generator import Generator
 from viz import *
+from KMNIST import KMNIST
 
 def train(FLAGS):
     
@@ -26,15 +27,22 @@ def train(FLAGS):
     e_size = FLAGS.eval_size
     save_samples = FLAGS.save_samples
     plot_losses = FLAGS.plot_losses
+    dataset = FLAGS.dataset
     print ('[INFO]Hyperparameters defined!')
 
     # Define the transforms
     transform = transforms.ToTensor()
 
     # Get the training datasets
-    train_data = datasets.MNIST(root='data', train=True,
+    if FLAGS.dataset == 'mnist':
+        train_data = datasets.MNIST(root='data', train=True,
+                                    download=True, transform=transform)
+    elif FLAGS.dataset == 'fashionmnist':
+        train_data = datasets.FashionMNIST(root='data', train=True,
+                                    download=True, transform=transform)
+    else:
+        train_data = KMNIST(root='data', train=True,
                                 download=True, transform=transform)
-    
 
     # Prepare the DataLoader
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size,

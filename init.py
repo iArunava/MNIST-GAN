@@ -114,7 +114,6 @@ if __name__ == '__main__':
 
     parser.add_argument('-d', '--dataset',
             type=str,
-            default='kmnist',
             choices=['kmnist', 'mnist', 'fashionmnist'],
             help='The dataset to use')
 
@@ -124,8 +123,9 @@ if __name__ == '__main__':
     FLAGS.cuda = FLAGS.cuda and torch.cuda.is_available()
     
     # Get the desired pretrained models for the dataset
-    FLAGS.dpath = '/'.join(FLAGS.dpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.dpath.split('/')[3]])
-    FLAGS.gpath = '/'.join(FLAGS.gpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.gpath.split('/')[3]])
+    if not FLAGS.dataset is None:
+        FLAGS.dpath = '/'.join(FLAGS.dpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.dpath.split('/')[3]])
+        FLAGS.gpath = '/'.join(FLAGS.gpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.gpath.split('/')[3]])
     
     print (FLAGS.dpath)
 

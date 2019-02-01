@@ -35,7 +35,7 @@ or
 python3 init.py --mode predict -dpath /path/to/discriminator.pth -gpath /path/to/generator.pth
 ```
 
-## How the model looks?
+## Model Architecture
 
 ### Discriminator
 

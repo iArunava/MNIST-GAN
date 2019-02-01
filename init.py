@@ -98,25 +98,40 @@ if __name__ == '__main__':
 
     parser.add_argument('--mode',
             type=str,
-            default='test',
+            default='predict',
+            choices=['train', 'predict'],
             help='The mode whether to train or test')
 
     parser.add_argument('-dpath',
             type=str,
-            default='./pretrained_models/KMNIST/dmodel-ckpt-kmnist.pth')
+            default='./pretrained_models/KMNIST/dmodel-ckpt.pth',
+            help='Path to the Discriminator checkpoint')
 
     parser.add_argument('-gpath',
             type=str,
-            default='./pretrained_models/KMNIST/gmodel-ckpt-kmnist.pth')
+            default='./pretrained_models/KMNIST/gmodel-ckpt.pth',
+            help='Path to the Generator checkpoint')
+
+    parser.add_argument('-d', '--dataset',
+            type=str,
+            default='kmnist',
+            choices=['kmnist', 'mnist', 'fashionmnist'],
+            help='The dataset to use')
 
     FLAGS, unparsed = parser.parse_known_args()
 
     # Check if cuda is available
     FLAGS.cuda = FLAGS.cuda and torch.cuda.is_available()
+    
+    # Get the desired pretrained models for the dataset
+    FLAGS.dpath = '/'.join(FLAGS.dpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.dpath.split('/')[3]])
+    FLAGS.gpath = '/'.join(FLAGS.gpath.split('/')[:2] + [FLAGS.dataset] + [FLAGS.gpath.split('/')[3]])
+    
+    print (FLAGS.dpath)
 
     if FLAGS.mode == 'train':
         train(FLAGS)
-    elif FLAGS.mode == 'test':
+    elif FLAGS.mode == 'predict':
         test(FLAGS)
     else:
         raise RuntimeError('Invalid value passed for mode. \

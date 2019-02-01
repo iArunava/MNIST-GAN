@@ -1,5 +1,14 @@
 import torch
 import argparse
+from train import train
+from test import test
+from Discriminator import Discriminator
+from Generator import Generator
+import torch.optim as optim
+import torchvision.transforms as trasnforms
+from torch.utils import *
+import torch.nn.functional as F
+import pickle as pkl
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -72,7 +81,7 @@ if __name__ == '__main__':
             default=50,
             help='To print loss and other stats at an interval of x epochs')
 
-    parser.add_argument('-es', '--e-size',
+    parser.add_argument('-es', '--eval-size',
             type=int,
             default=16,
             help='The sample size for the evaluation.')
@@ -94,20 +103,20 @@ if __name__ == '__main__':
 
     parser.add_argument('-dpath',
             type=str,
-            default='./pretrained_models/KMNIST/model-d-kmnist.pt')
+            default='./pretrained_models/KMNIST/dmodel-ckpt-kmnist.pth')
 
     parser.add_argument('-gpath',
             type=str,
-            default='./pretrained_models/KMNIST/model-g-kmnist.pt')
+            default='./pretrained_models/KMNIST/gmodel-ckpt-kmnist.pth')
 
     FLAGS, unparsed = parser.parse_known_args()
 
     # Check if cuda is available
     FLAGS.cuda = FLAGS.cuda and torch.cuda.is_available()
 
-    if mode == 'train':
+    if FLAGS.mode == 'train':
         train(FLAGS)
-    elif mode == 'test':
+    elif FLAGS.mode == 'test':
         test(FLAGS)
     else:
         raise RuntimeError('Invalid value passed for mode. \

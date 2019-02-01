@@ -14,6 +14,8 @@ class Generator(nn.Module):
         - output_size : The number neurons for the output layer
         '''
         
+        super().__init__()
+
         # Define the class variables
         self.input_size = input_size
         self.hidden_dim = hidden_dim
@@ -27,8 +29,6 @@ class Generator(nn.Module):
         self.fc4 = nn.Linear(hidden_dim*4, output_size)
 
         self.dropout = nn.Dropout(0.3)
-
-        self.tanh = nn.tanh()
 
     def forward(self, x):
         '''
@@ -51,6 +51,6 @@ class Generator(nn.Module):
         x = self.dropout(x)
 
         x = self.fc4(x)
-        out = self.tanh(x)
+        out = F.tanh(x)
 
         return out

@@ -12,16 +12,17 @@ class Discriminator(nn.Module):
         - hidden_dim : the number of hidden neurons in the last layer
         - output_size : the number of output neurons
         '''
-        
+        super().__init__()
+
         # Define the class variables
         self.input_size = input_size
         self.hidden_dim = hidden_dim
         self.output_size = output_size
 
         # Define the required modules for this architecture
-        self.fc1 = nn.Linear(self.input_size, self.hidden_dim*2)
-        self.fc2 = nn.Linear(self.hidden_dim*2, self.hidden_dim*3)
-        self.fc3 = nn.Linear(self.hidden_dim*3, self.hidden_dim)
+        self.fc1 = nn.Linear(self.input_size, self.hidden_dim*4)
+        self.fc2 = nn.Linear(self.hidden_dim*4, self.hidden_dim*2)
+        self.fc3 = nn.Linear(self.hidden_dim*2, self.hidden_dim)
 
         self.fc4 = nn.Linear(self.hidden_dim, self.output_size)
 

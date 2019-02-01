@@ -1,49 +1,58 @@
 import torch
+import numpy as np
 import torch.optim as optim
 from torchvision import datasets
 import torchvision.transforms as transforms
-from .Discriminator import Discriminator
-from .Generator import Generator
+from Discriminator import Discriminator
+from Generator import Generator
 from viz import *
 
 def train(FLAGS):
     
     # Define the hyperparameters
     batch_size = FLAGS.batch_size
-    d_lr = FLAGS.d_lr
-    g_lr = FLAGS.g_lr
+    d_lr = FLAGS.dlr
+    g_lr = FLAGS.glr
     num_workers = FLAGS.num_workers
-    d_in = FLAGS.d_in
-    d_hid = FLAGS.d_hid
-    d_out = FLAGS.d_out
-    z_size = FLAGS.z_size
-    g_out = FLAGS.g_out
-    g_hid = FLAGS.g_hid
+    d_in = FLAGS.din
+    d_hid = FLAGS.dhid
+    d_out = FLAGS.dout
+    z_size = FLAGS.zsize
+    g_out = FLAGS.gout
+    g_hid = FLAGS.ghid
     cuda = FLAGS.cuda
     epochs = FLAGS.epochs
     p_every = FLAGS.p_every
     e_size = FLAGS.eval_size
     save_samples = FLAGS.save_samples
+    plot_losses = FLAGS.plot_losses
+    print ('[INFO]Hyperparameters defined!')
 
     # Define the transforms
     transform = transforms.ToTensor()
 
     # Get the training datasets
     train_data = datasets.MNIST(root='data', train=True,
-                                download=True, transforms=transform)
+                                download=True, transform=transform)
     
+
     # Prepare the DataLoader
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size,
                                                num_workers=num_workers)
 
+    print ('[INFO]DataLoader defined!')
     
     # Instantiate the network
     D = Discriminator(d_in, d_hid, d_out)
-    G = Generator(g_in, g_hid, g_out)
+    G = Generator(z_size, g_hid, g_out)
+    
+    print ('[INFO]Network Instantiated!')
 
     # Create optimizers
     d_opt = optim.Adam(D.parameters(), d_lr)
-    g_opt = optim.Adam(G.parameters(). g_lr)
+    g_opt = optim.Adam(G.parameters(), g_lr)
+    
+    print ('[INFO]Optimizers defined!')
 
     # Get some fixed data for evaluating.
     fixed_z = np.random.uniform(-1, 1, size=(e_size, z_size))
@@ -54,7 +63,6 @@ def train(FLAGS):
         fixed_z = fixed_z.cuda()
         D.cuda()
         G.cuda()
-
     
     # Train the network
     print ('[INFO]Starting Training...')
@@ -150,3 +158,13 @@ def train(FLAGS):
                 if save_samples:
                     with open('train_samples.pkl', 'wb') as f:
                         pkl.dump(samples, f)
+
+                if plot_losses:
+                    fig, ax = plt.subplots()
+                    losses = np.array(losses)
+                    plt.plot(losses.T[0], label='Discriminator')
+                    plt.plot(losses.T[1], label='Generator')
+                    plt.title('Training Losses')
+                    plt.legend()
+
+    print ('[INFO]Training completed successfully!!')
